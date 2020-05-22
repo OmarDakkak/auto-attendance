@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/util/validators';
+import { useForm } from '../../shared/hooks/form-hook';
+import './ModuleForm.css';
 
 const DUMMY_MODULES = [
     {
@@ -27,6 +29,23 @@ const UpdateModule = () =>{
     const moduleId = useParams().moduleId;
 
     const identifiedModule = DUMMY_MODULES.find(m => m.id === moduleId);
+
+    const [formState, inputHandler] =  useForm({
+        title: {
+            value: identifiedModule.title,
+            isValid: true
+        },
+        description: {
+            value: identifiedModule.description,
+            isValid: true 
+        }
+    }, true);
+
+    const placeUpdateSubmitHandler = event => {
+        event.preventDefault();
+        console.log(formState.inputs);
+    };
+
     if(!identifiedModule) {
         return (
             <div className="center">
@@ -36,7 +55,7 @@ const UpdateModule = () =>{
     }
 
     return(
-        <form>
+        <form className="module-form" onSubmit={placeUpdateSubmitHandler}>
             <Input
              id="title"
              element="input" 
@@ -44,9 +63,9 @@ const UpdateModule = () =>{
              label="Intitulé du Module"
              validators={[VALIDATOR_REQUIRE()]}
              errorText = "Please enter a valid title!"
-             onInput={()=>{}}
-             value = {identifiedModule.title}
-             valid= {true}
+             onInput={inputHandler}
+             value = {formState.inputs.title.value}
+             valid= {formState.inputs.title.isValid}
             />
             <Input
              id="description"
@@ -54,11 +73,11 @@ const UpdateModule = () =>{
              label="Description du Module"
              validators={[VALIDATOR_MINLENGTH(5)]}
              errorText = "Please enter a valid description (min 5 characters)!"
-             onInput={()=>{}}
-             value = {identifiedModule.description}
-             valid= {true}
+             onInput={inputHandler}
+             value = {formState.inputs.description.value}
+             valid= {formState.inputs.description.isValid}
             />
-            <Button type="submit" disabled={true}>
+            <Button type="submit" disabled={!formState.isValid}>
                 Update module
             </Button>
         </form>

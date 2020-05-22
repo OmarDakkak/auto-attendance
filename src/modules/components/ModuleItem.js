@@ -38,7 +38,7 @@ const ModuleItem = props =>{
                     <div className="module-item__actions">
                         <Button inverse onClick={openMapHandler}>Etudiants</Button>
                         <Button>Nouvelle Abscence</Button>
-                        <Button to={`/Modules/${props.id}`} danger>Modifier une abscence</Button>
+                        <Button to={`/Modules/${props.id}`} danger>Modifier le Module</Button>
                     </div>
                 </Card>
             </li>
