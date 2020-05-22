@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
+import Card from '../../shared/components/UIElements/Card';
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/util/validators';
 import { useForm } from '../../shared/hooks/form-hook';
 import './ModuleForm.css';
@@ -26,20 +27,38 @@ const DUMMY_MODULES = [
 ];
 
 const UpdateModule = () =>{
+    const [isLoading, setIsLoading] = useState(true); 
     const moduleId = useParams().moduleId;
 
-    const identifiedModule = DUMMY_MODULES.find(m => m.id === moduleId);
-
-    const [formState, inputHandler] =  useForm({
+    
+    const [formState, inputHandler, setFormData] =  useForm({
         title: {
-            value: identifiedModule.title,
-            isValid: true
+            value: '',
+            isValid: false
         },
         description: {
-            value: identifiedModule.description,
-            isValid: true 
+            value: '',
+            isValid: false
         }
-    }, true);
+    }, false);
+
+    const identifiedModule = DUMMY_MODULES.find(m => m.id === moduleId);
+    useEffect(()=>{
+        if(identifiedModule){
+            setFormData({
+                title: {
+                    value: identifiedModule.title,
+                    isValid: true
+                },
+                description: {
+                    value: identifiedModule.description,
+                    isValid: true
+                }
+            }, true);
+        }
+        setIsLoading(false);
+    }, [setFormData, identifiedModule]);
+    
 
     const placeUpdateSubmitHandler = event => {
         event.preventDefault();
@@ -49,9 +68,19 @@ const UpdateModule = () =>{
     if(!identifiedModule) {
         return (
             <div className="center">
-                <h2>Aucun module n'a été trouvé!!</h2>
+                <Card>
+                    <h2>Aucun module n'a été trouvé!!</h2>
+                </Card>
             </div>
             );
+    }
+
+    if(isLoading) {
+        return (
+            <div className="center">
+                <h2>Loading ...</h2>
+            </div>
+        );
     }
 
     return(
@@ -64,8 +93,8 @@ const UpdateModule = () =>{
              validators={[VALIDATOR_REQUIRE()]}
              errorText = "Please enter a valid title!"
              onInput={inputHandler}
-             value = {formState.inputs.title.value}
-             valid= {formState.inputs.title.isValid}
+             initialValue = {formState.inputs.title.value}
+             initialValid= {formState.inputs.title.isValid}
             />
             <Input
              id="description"
@@ -74,8 +103,8 @@ const UpdateModule = () =>{
              validators={[VALIDATOR_MINLENGTH(5)]}
              errorText = "Please enter a valid description (min 5 characters)!"
              onInput={inputHandler}
-             value = {formState.inputs.description.value}
-             valid= {formState.inputs.description.isValid}
+             initialValue = {formState.inputs.description.value}
+             initialValid= {formState.inputs.description.isValid}
             />
             <Button type="submit" disabled={!formState.isValid}>
                 Update module

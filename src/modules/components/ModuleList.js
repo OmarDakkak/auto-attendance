@@ -3,6 +3,7 @@ import React from 'react';
 import Card from '../../shared/components/UIElements/Card';
 import './ModuleList.css';
 import ModuleItem from './ModuleItem';
+import Button from '../../shared/components/FormElements/Button';
 
 const ModuleList = props =>{
     if(props.items.length === 0 ){
@@ -10,7 +11,7 @@ const ModuleList = props =>{
             <div className="Module-list center">
                 <Card> 
                     <h2>No Modules found, maybe create one?</h2>
-                    <button>Share Module</button>
+                    <Button to="Modules/new">Share Module</Button>
                 </Card>
             </div>
             );
